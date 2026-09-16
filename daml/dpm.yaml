@@ -1,0 +1,13 @@
+schema: 1
+
+workspace:
+  name: token-trading
+  sdk: 3.4.11
+  members:
+    - governance-action-v1
+
+  registries:
+    query:
+      public: https://zot.oceano.2networks.tech/home
+    publish:
+      public: https://zot.oceano.2networks.tech/home

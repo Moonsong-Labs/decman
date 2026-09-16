@@ -1,0 +1,10 @@
+schema: 1
+
+package:
+  name: governance-action-v1
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+  dependencies:
+    daml-script: builtin
+    daml-stdlib: builtin
