@@ -8,6 +8,15 @@ workspace:
     - ./governance-core
     - ./governance-core-test
     - ./governance-rewards-assign-test
+    - ./governance-rewards-automation
+    - ./governance-rewards-test
+    - ./governance-token-custody
+    - ./governance-token-custody-test
+    - ./governance-utility-credential
+    - ./governance-utility-credential-test
+    - ./governance-utility-onboarding
+    - ./governance-utility-onboarding-test
+    - ./orphan-marker
 
   registries:
     query:

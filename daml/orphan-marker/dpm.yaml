@@ -1,0 +1,14 @@
+schema: 1
+
+package:
+  name: orphan-marker
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-script: builtin
+    daml-stdlib: builtin
+
+  # build-options:
+  # - --target=2.2
