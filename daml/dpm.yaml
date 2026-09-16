@@ -5,6 +5,8 @@ workspace:
   sdk: 3.4.11
   members:
     - governance-action-v1
+    - governance-core
+    - governance-core-test
 
   registries:
     query:
