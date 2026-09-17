@@ -7,31 +7,31 @@ package:
   sdk: workspace
 
   dependencies:
-    daml-script: builtin
+    daml-prim: builtin
     daml-stdlib: builtin
     daml-script: builtin
 
   data-dependencies:
-    governance-action-v1:
-      member: true
-    governance-core:
-      member: true
-    governance-core-test:
-      member: true
-    governance-rewards-automation:
-      member: true
+    # governance-action-v1:
+    #   member: true
+    # governance-core:
+    #   member: true
+    # governance-core-test:
+    #   member: true
+    # governance-rewards-automation:
+    #   member: true
 
     splice-wallet:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-wallet-0.1.18.dar
-      dar: true
+      
 
     splice-amulet:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-amulet-0.1.19.dar
-      dar: true
+      
 
     testlib:
       path: ../dars/testlib-0.1.0.dar

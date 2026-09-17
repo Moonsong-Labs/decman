@@ -11,19 +11,19 @@ package:
     daml-stdlib: builtin
 
   data-dependencies:
-    governance-action-v1: 
-      member: true
-    governance-core:
-      member: true
+    # governance-action-v1: 
+    #   member: true
+    # governance-core:
+    #   member: true
     testlib:
       path: ../dars/testlib-0.1.0.dar
     
 
     splice-util:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-util-0.1.4.dar
-      dar: true
+      
   
   # build-options:
   # - --target=2.2

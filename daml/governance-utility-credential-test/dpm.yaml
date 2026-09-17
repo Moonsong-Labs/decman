@@ -7,23 +7,23 @@ package:
   sdk: workspace
 
   dependencies:
-    daml-script: builtin
+    daml-prim: builtin
     daml-stdlib: builtin
     daml-script: builtin
 
   data-dependencies:
-    governance-action-v1:
-      member: true
-    governance-core:
-      member: true
-    governance-utility-credential:
-      member: true
+    # governance-action-v1:
+    #   member: true
+    # governance-core:
+    #   member: true
+    # governance-utility-credential:
+    #   member: true
 
     splice-util:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-util-0.1.4.dar
-      dar: true
+      
 
     testlib:
       path: ../dars/testlib-0.1.0.dar

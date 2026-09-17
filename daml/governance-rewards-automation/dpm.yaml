@@ -11,33 +11,33 @@ package:
     daml-stdlib: builtin
 
   data-dependencies:
-    governance-action-v1:
-      member: true
+    # governance-action-v1:
+    #   member: true
 
     splice-wallet:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-wallet-0.1.18.dar
-      dar: true
+      
 
     # 0.1.19 exposes the concrete RewardCouponV2 that Delegation_Assign pins to.
     splice-amulet:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-amulet-0.1.19.dar
-      dar: true
+      
 
     splice-api-reward-assignment-v1:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-api-reward-assignment-v1-1.0.0.dar
-      dar: true
+      
 
     splice-api-token-metadata-v1:
-      repository: github.com/canton-network/splice
+      git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
-      dar: true
+      
 
   # build-options:
   # - --target=2.2
