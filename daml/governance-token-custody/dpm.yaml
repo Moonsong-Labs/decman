@@ -11,38 +11,37 @@ package:
     daml-stdlib: builtin
 
   data-dependencies:
-    # governance-action-v1:
-    #   member: true
+    governance-action-v1: member
 
     splice-api-token-holding-v1:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-api-token-holding-v1-1.0.0.dar
-      
+
 
     splice-api-token-metadata-v1:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
-      
+
 
     splice-api-token-transfer-instruction-v1:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-api-token-transfer-instruction-v1-1.0.0.dar
-      
+
 
     splice-util:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-util-0.1.4.dar
-      
+
 
     splice-wallet:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-wallet-0.1.18.dar
-      
+
 
     utility-registry-app-v0:
       path: ../dars/utility-registry-app-v0-0.7.0.dar

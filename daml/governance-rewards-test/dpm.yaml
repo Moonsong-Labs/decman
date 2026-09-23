@@ -12,26 +12,22 @@ package:
     daml-script: builtin
 
   data-dependencies:
-    # governance-action-v1:
-    #   member: true
-    # governance-core:
-    #   member: true
-    # governance-core-test:
-    #   member: true
-    # governance-rewards-automation:
-    #   member: true
+    governance-action-v1: member
+    governance-core: member
+    governance-core-test: member
+    governance-rewards-automation: member
 
     splice-wallet:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-wallet-0.1.18.dar
-      
+
 
     splice-amulet:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-amulet-0.1.19.dar
-      
+
 
     testlib:
       path: ../dars/testlib-0.1.0.dar

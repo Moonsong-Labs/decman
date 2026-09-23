@@ -11,14 +11,13 @@ package:
     daml-stdlib: builtin
 
   data-dependencies:
-    # governance-action-v1:
-    #   member: true
+    governance-action-v1: member
 
     splice-util:
       git: https://github.com/canton-network/splice
       commit: d5b780b
       path: daml/dars/splice-util-0.1.4.dar
-      
+
 
     utility-credential-app-v0:
       path: ../dars/utility-credential-app-v0-0.4.1.dar
