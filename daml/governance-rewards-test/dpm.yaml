@@ -13,21 +13,21 @@ package:
 
   data-dependencies:
     governance-action-v1: member
-    governance-core: member
+    governance-core-v1: member
     governance-core-test: member
-    governance-rewards-automation: member
+    governance-rewards-automation-v1: member
 
     splice-wallet:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-wallet-0.1.18.dar
-
+      
 
     splice-amulet:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-amulet-0.1.19.dar
-
+      
 
     testlib:
       path: ../dars/testlib-0.1.0.dar

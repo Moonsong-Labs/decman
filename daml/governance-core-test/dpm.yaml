@@ -12,16 +12,16 @@ package:
 
   data-dependencies:
     governance-action-v1: member
-    governance-core: member
+    governance-core-v1: member
     testlib:
       path: ../dars/testlib-0.1.0.dar
     
 
     splice-util:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-util-0.1.4.dar
-
+      
   
   # build-options:
   # - --target=2.2

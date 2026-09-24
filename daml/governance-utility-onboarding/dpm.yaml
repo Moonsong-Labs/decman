@@ -15,43 +15,43 @@ package:
 
     splice-amulet:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-amulet-0.1.19.dar
 
 
     splice-api-featured-app-v1:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-featured-app-v1-1.0.0.dar
 
 
     splice-api-token-burn-mint-v1:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-token-burn-mint-v1-1.0.0.dar
 
 
     splice-api-token-holding-v1:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-token-holding-v1-1.0.0.dar
 
 
     splice-api-token-metadata-v1:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
 
 
     splice-api-token-transfer-instruction-v1:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-token-transfer-instruction-v1-1.0.0.dar
 
 
     splice-util:
       git: https://github.com/canton-network/splice
-      commit: d5b780b
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-util-0.1.4.dar
 
 
