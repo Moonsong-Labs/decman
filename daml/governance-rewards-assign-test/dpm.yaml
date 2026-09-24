@@ -10,7 +10,7 @@ package:
     daml-prim: builtin
     daml-script: builtin
     daml-stdlib: builtin
-    
+
   data-dependencies:
     governance-action-v1: member
     governance-core-v1: member
@@ -21,28 +21,24 @@ package:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-amulet-0.1.19.dar
-      
 
     splice-api-reward-assignment-v1:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-reward-assignment-v1-1.0.0.dar
-      
-    
+
     splice-api-token-metadata-v1:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
-      
-
 
     testlib:
       path: ../dars/testlib-0.1.0.dar
-    
+
   
-  # build-options:
-  # - --target=2.2
-  # - -Wno-upgrade-interfaces
-  # - -Wno-template-interface-depends-on-daml-script
-  # - --ghc-option=-Wunused-binds
-  # - --ghc-option=-Wunused-matches
+  build-arguments:
+    - --target=2.2
+    - -Wno-upgrade-interfaces
+    - -Wno-template-interface-depends-on-daml-script
+    - --ghc-option=-Wunused-binds
+    - --ghc-option=-Wunused-matches

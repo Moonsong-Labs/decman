@@ -10,5 +10,5 @@ package:
     daml-script: builtin
     daml-stdlib: builtin
 
-  # build-options:
-  # - --target=2.2
+  build-arguments:
+  - --target=2.2

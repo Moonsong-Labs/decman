@@ -73,7 +73,7 @@ package:
     utility-registry-v0:
       path: ../dars/utility-registry-v0-0.6.0.dar
 
-  # build-options:
-  # - --target=2.2
-  # - --ghc-option=-Wunused-binds
-  # - --ghc-option=-Wunused-matches
+  build-arguments:
+  - --target=2.2
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches

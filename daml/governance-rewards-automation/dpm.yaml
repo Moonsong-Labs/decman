@@ -38,7 +38,7 @@ package:
       path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
 
 
-  # build-options:
+  # build-arguments:
   # - --target=2.2
   # - --ghc-option=-Wunused-binds
   # - --ghc-option=-Wunused-matches
