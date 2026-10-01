@@ -21,18 +21,18 @@ package:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-wallet-0.1.18.dar
-      
+
 
     splice-amulet:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-amulet-0.1.19.dar
-      
+
 
     testlib:
       path: ../dars/testlib-0.1.0.dar
 
-  # build-options:
+  build-arguments
   # - --target=2.2
   # - -Wno-upgrade-interfaces
   # - -Wno-template-interface-depends-on-daml-script

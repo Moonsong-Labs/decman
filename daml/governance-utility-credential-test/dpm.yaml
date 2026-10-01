@@ -20,7 +20,7 @@ package:
       git: https://github.com/canton-network/splice
       commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
       path: daml/dars/splice-util-0.1.4.dar
-      
+
 
     testlib:
       path: ../dars/testlib-0.1.0.dar
@@ -31,9 +31,9 @@ package:
     utility-credential-v0:
       path: ../dars/utility-credential-v0-0.1.0.dar
 
-  # build-options:
-  # - --target=2.2
-  # - -Wno-upgrade-interfaces
-  # - -Wno-template-interface-depends-on-daml-script
-  # - --ghc-option=-Wunused-binds
-  # - --ghc-option=-Wunused-matches
+  build-arguments:
+  - --target=2.2
+  - -Wno-upgrade-interfaces
+  - -Wno-template-interface-depends-on-daml-script
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches
