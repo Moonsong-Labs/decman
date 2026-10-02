@@ -68,17 +68,25 @@ package:
       path: daml/dars/splice-wallet-0.1.18.dar
 
 
-    utility-credential-v0:
-      path: ../dars/utility-credential-v0-0.1.0.dar
+    utility-commercials:
+      registry: main
+      version: 0.4.1
 
-    utility-registry-app-v0:
-      path: ../dars/utility-registry-app-v0-0.7.0.dar
+    utility-credential-app:
+      registry: main
+      version: 0.4.1
 
-    utility-registry-holding-v0:
-      path: ../dars/utility-registry-holding-v0-0.2.1.dar
+    utility-registry-app:
+      registry: main
+      version: 0.7.0
 
-    utility-registry-v0:
-      path: ../dars/utility-registry-v0-0.6.0.dar
+    utility-registry-holding:
+      registry: main
+      version: 0.2.1
+
+    utility-registry:
+      registry: main
+      version: 0.6.0
 
   build-arguments:
   - --target=2.2

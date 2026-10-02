@@ -19,11 +19,17 @@ package:
       path: daml/dars/splice-util-0.1.4.dar
 
 
-    utility-credential-app-v0:
-      path: ../dars/utility-credential-app-v0-0.4.1.dar
+    utility-credential-app:
+      registry: main
+      version: 0.4.1
 
-    utility-credential-v0:
-      path: ../dars/utility-credential-v0-0.1.0.dar
+    utility-credential:
+      registry: main
+      version: 0.1.0
+
+    utility-commercials:
+      registry: main
+      version: 0.4.1
 
   build-arguments:
   - --target=2.2
