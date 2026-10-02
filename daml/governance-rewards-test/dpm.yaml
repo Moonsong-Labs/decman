@@ -30,7 +30,8 @@ package:
 
 
     testlib:
-      path: ../dars/testlib-0.1.0.dar
+      version: "0.1.0"
+      registry: "https://zot.oceano.2networks.tech"
 
   build-arguments:
   - --target=2.2

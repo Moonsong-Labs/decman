@@ -17,7 +17,8 @@ package:
     governance-token-custody-v1: member
 
     testlib:
-      path: ../dars/testlib-0.1.0.dar
+      version: "0.1.0"
+      registry: "https://zot.oceano.2networks.tech"
 
     splice-amulet:
       git: https://github.com/canton-network/splice

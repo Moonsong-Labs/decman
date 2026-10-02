@@ -14,7 +14,8 @@ package:
     governance-action-v1: member
     governance-core-v1: member
     testlib:
-      path: ../dars/testlib-0.1.0.dar
+      version: "0.1.0"
+      registry: "https://zot.oceano.2networks.tech"
 
 
     splice-util:
