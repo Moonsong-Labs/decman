@@ -18,7 +18,7 @@ package:
 
     testlib:
       version: "0.1.0"
-      registry: "https://zot.oceano.2networks.tech"
+      registry: main
 
     splice-amulet:
       git: https://github.com/canton-network/splice

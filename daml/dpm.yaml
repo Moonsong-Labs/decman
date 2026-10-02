@@ -20,6 +20,6 @@ workspace:
 
   registries:
     query:
-      public: https://zot.oceano.2networks.tech/home
+      main: oci://zot.oceano.2networks.tech
     publish:
-      public: https://zot.oceano.2networks.tech/home
+      main: oci://zot.oceano.2networks.tech

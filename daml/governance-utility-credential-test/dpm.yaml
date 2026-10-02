@@ -24,7 +24,7 @@ package:
 
     testlib:
       version: "0.1.0"
-      registry: "https://zot.oceano.2networks.tech"
+      registry: main
 
     utility-credential-app-v0:
       path: ../dars/utility-credential-app-v0-0.4.1.dar

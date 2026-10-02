@@ -15,7 +15,7 @@ package:
     governance-core-v1: member
     testlib:
       version: "0.1.0"
-      registry: "https://zot.oceano.2networks.tech"
+      registry: main
 
 
     splice-util:
