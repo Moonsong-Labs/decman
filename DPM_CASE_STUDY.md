@@ -18,9 +18,9 @@ This case study involves three pieces:
   DARs committed to the repository.
 - **This repository**, a fork of DecMan whose Daml packages are migrated to
   `dpm.yaml`. The application code is unchanged.
-- **dpm (Moonsong Labs)**, which builds the fork. It reads `dpm.yaml`, fetches dependencies from their sources,
-  and calls `damlc`. Its source is the private repository
-  `Moonsong-Labs/dpm-priv`.
+- **dpm (Moonsong Labs)**, which builds the fork. It reads `dpm.yaml`,
+  fetches dependencies from their sources, and calls `damlc`. Its source is
+  the private repository `Moonsong-Labs/dpm-priv`.
 
 ```mermaid
 flowchart LR
