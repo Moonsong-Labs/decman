@@ -19,7 +19,7 @@ This case study has two pieces, both built by Moonsong Labs:
   and calls `damlc`. Its source is the private repository
   `Moonsong-Labs/dpm-priv`.
 - **This repository**, a fork of DecMan whose Daml packages build with dpm
-  (Moonsong Labs). Only the Daml manifests changed; the application code is
+  (Moonsong Labs). Only the Daml build setup changed; the application code is
   the same as upstream DecMan, which serves as the baseline.
 
 ```mermaid
