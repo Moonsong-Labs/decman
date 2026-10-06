@@ -12,15 +12,15 @@ land.
 
 ## Setup
 
-This case study involves three pieces:
+This case study has two pieces, both built by Moonsong Labs:
 
-- **Upstream DecMan**, the baseline. It builds with `daml.yaml` files and
-  DARs committed to the repository.
-- **This repository**, a fork of DecMan whose Daml packages are migrated to
-  `dpm.yaml`. The application code is unchanged.
-- **dpm (Moonsong Labs)**, which builds the fork. It reads `dpm.yaml`,
-  fetches dependencies from their sources, and calls `damlc`. Its source is
-  the private repository `Moonsong-Labs/dpm-priv`.
+- **dpm (Moonsong Labs)**, a fork of `dpm` with advanced package-management
+  capabilities. It reads `dpm.yaml`, fetches dependencies from their sources,
+  and calls `damlc`. Its source is the private repository
+  `Moonsong-Labs/dpm-priv`.
+- **This repository**, a fork of DecMan whose Daml packages build with dpm
+  (Moonsong Labs). Only the Daml manifests changed; the application code is
+  the same as upstream DecMan, which serves as the baseline.
 
 ```mermaid
 flowchart LR
