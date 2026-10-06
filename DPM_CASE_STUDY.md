@@ -1,5 +1,12 @@
 # Case study: building Decentralization Manager with `dpm.yaml`
 
+We migrated the Daml build of Decentralization Manager, a production Canton
+application with 13 packages, from `daml.yaml` to `dpm.yaml` using dpm-priv,
+our fork of `dpm`. The migration removes all 17 committed third-party DARs, 24
+versioned sibling paths, and 12 duplicate SDK declarations. Version mismatches,
+longer manifests, and the loss of byte-identical inputs remain open until
+workspace catalogs and a lockfile land.
+
 ## The problem
 
 The
