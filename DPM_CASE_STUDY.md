@@ -13,8 +13,6 @@ DARs, most of them from Splice and the Digital Asset (DA) utility packages.
 Upstream commits those DARs to the repository and references them by relative
 path.
 
-For the DecMan application itself, see the [DecMan README](README.md).
-
 ## Summary
 
 | Metric | Upstream (`daml.yaml`) | This fork (`dpm.yaml`) |
