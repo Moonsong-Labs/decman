@@ -1,11 +1,44 @@
 # Case study: building Decentralization Manager with `dpm.yaml`
 
-We migrated the Daml build of Decentralization Manager, a production Canton
-application with 13 packages, from `daml.yaml` to `dpm.yaml` using dpm-priv,
-our fork of `dpm`. The migration removes all 17 committed third-party DARs, 24
-versioned sibling paths, and 12 duplicate SDK declarations. Version mismatches,
-longer manifests, and the loss of byte-identical inputs remain open until
-workspace catalogs and a lockfile land.
+We migrated the Daml build of
+[Decentralization Manager](https://github.com/DLC-link/decentralization-manager)
+(DecMan), a production Canton application with 13 packages, from `daml.yaml`
+to `dpm.yaml`, using **dpm (Moonsong Labs)**: our build of `dpm` with advanced
+package-management capabilities. The migration removes all 17 committed
+third-party DARs, 24 versioned sibling paths, and 12 duplicate SDK
+declarations. Version mismatches, longer manifests, and the loss of
+byte-identical inputs remain open until workspace catalogs and a lockfile
+land.
+
+## Setup
+
+This case study involves three pieces:
+
+- **Upstream DecMan**, the baseline. It builds with `daml.yaml` files and
+  DARs committed to the repository.
+- **This repository**, a fork of DecMan whose Daml packages are migrated to
+  `dpm.yaml`. The application code is unchanged.
+- **dpm (Moonsong Labs)**, which builds the fork. It reads `dpm.yaml`, fetches dependencies from their sources,
+  and calls `damlc`. Its source is the private repository
+  `Moonsong-Labs/dpm-priv`.
+
+```mermaid
+flowchart LR
+  subgraph before["Before: upstream DecMan"]
+    direction TB
+    m1["multi-package.yaml<br/>+ 13 daml.yaml"] -->|relative paths| v["17 DARs committed<br/>in daml/dars/"]
+    m1 --> c1["damlc"]
+    v --> c1
+  end
+  subgraph after["After: this repository"]
+    direction TB
+    m2["workspace dpm.yaml<br/>+ 13 package dpm.yaml"] --> d["dpm (Moonsong Labs)"]
+    g["Splice Git repository"] -->|fetch| d
+    o["OCI registry"] -->|fetch| d
+    d -->|generated daml.yaml| c2["damlc"]
+  end
+  before ~~~ after
+```
 
 ## The problem
 
@@ -15,8 +48,7 @@ describes Daml dependency management as "a manual, file-based process."
 Developers download DAR files by hand, move them between folders, and
 struggle to resolve version mismatches.
 
-[Decentralization Manager](https://github.com/DLC-link/decentralization-manager)
-(DecMan), a production Canton application, shows all three symptoms. This case
+DecMan shows all three symptoms. This case
 study migrates DecMan's Daml build to `dpm.yaml` and measures what changes.
 
 ## The problem in DecMan
@@ -39,13 +71,12 @@ utility packages.
 
 ## What we built
 
-dpm-priv is a Moonsong Labs fork of `dpm` that adds a `dpm dario` command
-set. It reads a declarative manifest, `dpm.yaml`, resolves each dependency
+dpm (Moonsong Labs) adds a `dpm dario` command set to `dpm`. It reads a declarative manifest, `dpm.yaml`, resolves each dependency
 from where it lives, generates the `daml.yaml` that `damlc` expects, and calls
 the standard `damlc`. The schema is specified in
-`pkg/dario/dpm-yaml-schema.md` in dpm-priv.
+`pkg/dario/dpm-yaml-schema.md` in `Moonsong-Labs/dpm-priv`.
 
-| Capability | Status in dpm-priv |
+| Capability | Status in dpm (Moonsong Labs) |
 |---|---|
 | `dpm.yaml` manifests for packages and workspaces | Done |
 | Workspaces: member globs, shared SDK version, and registries | Done |
@@ -145,7 +176,8 @@ workspace:
 ```
 
 Each package sets `sdk: workspace`. To build everything, run `dpm dario build`
-from `daml/` with a dpm-priv build that includes `member` support.
+from `daml/` with a build of dpm (Moonsong Labs) that includes `member`
+support.
 
 **Result:** one SDK declaration instead of 13, and one command to build the
 workspace.
@@ -160,8 +192,8 @@ repository doesn't, because maintaining digests by hand across 13 packages is
 error-prone.
 
 A lockfile restores the guarantee. It records the checksum of every resolved
-artifact and fails the build when a fetched artifact doesn't match. dpm-priv
-doesn't have one yet, and it's the next thing to build.
+artifact and fails the build when a fetched artifact doesn't match. dpm (Moonsong
+Labs) doesn't have one yet, and it's the next thing to build.
 
 ## Scorecard
 
@@ -196,7 +228,7 @@ workspace:
         path: daml/dars/splice-amulet-0.1.19.dar
 ```
 
-dpm-priv parses and validates `catalogs`, but packages can't reference them
+dpm (Moonsong Labs) parses and validates `catalogs`, but packages can't reference them
 yet.
 
 ### DARs that stay in the repository
@@ -218,21 +250,22 @@ Phase 1: migration
 - [x] Migrate all 13 packages to `dpm.yaml` with a workspace manifest.
 - [x] Replace sibling paths with `member` dependencies.
 - [x] Replace committed third-party DARs with OCI and Git dependencies.
-- [ ] Merge `member` resolution into dpm-priv `dario`.
+- [ ] Merge `member` resolution into the `dario` branch of dpm (Moonsong Labs).
 - [ ] Rename the workspace from `token-trading`, a leftover from an example.
 - [ ] Remove `daml/dars-to-publish/` and document how the registry was seeded.
 - [ ] Record a clean build from a fresh clone with an empty cache.
 
 Phase 2: workspace catalogs
 
-- [ ] Implement package-side catalog references in dpm-priv.
+- [ ] Implement package-side catalog references in dpm (Moonsong Labs).
 - [ ] Move Splice and DA utility declarations into `workspace.catalogs`.
 - [ ] Resolve the `splice-amulet` 0.1.17 and 0.1.19 mismatch.
 - [ ] Remeasure manifest size.
 
 Phase 3: lockfile
 
-- [ ] Implement a lockfile in dpm-priv that records artifact checksums.
+- [ ] Implement a lockfile in dpm (Moonsong Labs) that records artifact
+      checksums.
 - [ ] Commit the lockfile and show that a changed artifact fails the build.
 
 Out of scope: moving `releases/` to OCI, which requires DecMan runtime
