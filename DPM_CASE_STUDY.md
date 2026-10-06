@@ -1,19 +1,21 @@
 # Case study: building Decentralization Manager with `dpm.yaml`
 
-This repository is a fork of
+Can the proposed `dpm.yaml` design handle a real Daml workspace? To find out,
+we migrated the Daml build of
 [Decentralization Manager](https://github.com/DLC-link/decentralization-manager)
-(DecMan) whose Daml code builds with dpm-priv, the Moonsong Labs fork of `dpm`
-that implements the baseline of the proposed `dpm.yaml` design. This document
-compares the upstream build setup with the migrated one, so that `dpm`
-maintainers can evaluate the design on a production workspace. The design
-itself is specified in `pkg/dario/dpm-yaml-schema.md` in dpm-priv.
+(DecMan), a production application, from `daml.yaml` to `dpm.yaml`. This
+document presents the results for `dpm` maintainers.
 
-DecMan has 13 Daml packages that depend on each other and on 17 third-party
-DARs, most of them from Splice and the Digital Asset (DA) utility packages.
-Upstream commits those DARs to the repository and references them by relative
-path.
+DecMan is a demanding test. It has 13 Daml packages that depend on each other
+and on 17 third-party DARs, most of them from Splice and the Digital Asset (DA)
+utility packages. Upstream commits those DARs to the repository and references
+them by relative path.
 
-## Summary
+The migrated build runs on dpm-priv, the Moonsong Labs fork of `dpm` that
+implements the baseline of the design. The design is specified in
+`pkg/dario/dpm-yaml-schema.md` in dpm-priv.
+
+## Results
 
 | Metric | Upstream (`daml.yaml`) | This fork (`dpm.yaml`) |
 |---|---|---|
@@ -28,9 +30,9 @@ every `dpm.yaml` in this fork.
 
 The migration removes committed build inputs and hardcoded paths, but makes the
 manifests longer because each package declares its Git and OCI dependencies in
-full. Workspace catalogs, planned for Phase 2, address that.
+full. Workspace catalogs address that; see [Next steps](#next-steps).
 
-## Before: `daml.yaml` and `multi-package.yaml`
+## The starting point: `daml.yaml`
 
 The baseline is upstream `main` at commit
 [`b507e55`](https://github.com/DLC-link/decentralization-manager/commit/b507e5519c5d4bd8b8f5d0c6fe7c6548814fbf9f)
@@ -73,7 +75,7 @@ Four problems repeat across the workspace:
 - **Nothing detects drift.** `governance-token-custody-test` depends on
   `splice-amulet-0.1.17.dar`, while every other package uses `0.1.19`.
 
-## After: `dpm.yaml`
+## The migration: `dpm.yaml`
 
 The migration fixes the first three problems. Drift remains; see
 [Manifest size and drift](#manifest-size-and-drift).
@@ -148,7 +150,7 @@ SDK supplies them.
 To build the workspace, run `dpm dario build` from `daml/` with a dpm-priv
 build that includes `member` support.
 
-## Open gaps
+## What the migration doesn't solve yet
 
 ### Manifest size and drift
 
@@ -185,13 +187,13 @@ pinning.
 runtime. They aren't build inputs, so this migration leaves them in place.
 `daml/dars-to-publish/` holds the DARs used to seed the OCI registry.
 
-## Open design questions
+## Questions for `dpm` maintainers
 
 - How does a package reference a catalog entry? The schema reserves the
   feature but doesn't define the syntax.
 - What does the lockfile record, and where does it live in a workspace?
 
-## Plan
+## Next steps
 
 ### Phase 1: migration
 
