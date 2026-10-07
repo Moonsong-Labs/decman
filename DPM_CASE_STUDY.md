@@ -24,9 +24,10 @@ For DecMan, the build no longer reads any of the **17 third-party DARs** that
 upstream commits, and it drops **24 versioned sibling paths** and **12
 duplicate SDK declarations**.
 
-> **This demonstrates that a production Daml workspace can drop vendored DARs
-> and hardcoded paths by moving to a declarative manifest, without changing its
-> compiler or its application code.**
+> [!IMPORTANT]
+> This demonstrates that a production Daml workspace can drop vendored DARs and
+> hardcoded paths by moving to a declarative manifest, without changing its
+> compiler or its application code.
 
 ## Improvements in `dpm`, applied to DecMan
 
@@ -176,19 +177,6 @@ calls the standard `damlc`. Three commands cover the workflow:
 `member` dependency that names no package in the workspace, or a malformed
 version requirement **fails with a clear error** instead of a missing file
 halfway through compilation.
-
-### Status
-
-| Capability | Status |
-|---|---|
-| `dpm.yaml` for packages and workspaces | ✅ Done |
-| OCI and Git dependencies | ✅ Done |
-| Global cache | ✅ Done |
-| `build`, `generate`, and `publish` commands | ✅ Done |
-| Validation before the build | ✅ Done |
-| `member` dependencies and `build --all` | 🚧 Implemented, not merged yet |
-| Workspace catalogs | 🚧 Parsed and validated, not usable from packages |
-| Lockfile with artifact checksums | ❌ Not started |
 
 ## Three improvements, before and after
 
