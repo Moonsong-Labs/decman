@@ -10,7 +10,7 @@ paths and 12 duplicate SDK declarations. Version mismatches, longer manifests,
 and the loss of byte-identical inputs remain open until workspace catalogs and a
 lockfile land.
 
-## Set up the comparison
+## Two forks, one comparison
 
 This case study has two pieces, both built by Moonsong Labs:
 
@@ -40,7 +40,7 @@ flowchart LR
   before ~~~ after
 ```
 
-## Identify the problem
+## A manual, file-based process
 
 The
 [Canton Network Developer Experience and Tooling Survey (2026)](https://forum.canton.network/t/canton-network-developer-experience-and-tooling-survey-analysis-2026/8412)
@@ -51,7 +51,7 @@ struggle to resolve version mismatches.
 DecMan shows these symptoms, plus one the survey doesn't name: configuration
 duplicated across packages.
 
-## Find the problem in DecMan
+## The same symptoms in a production app
 
 The baseline is upstream `main` at commit
 [`b507e55`](https://github.com/DLC-link/decentralization-manager/commit/b507e5519c5d4bd8b8f5d0c6fe7c6548814fbf9f)
@@ -69,7 +69,7 @@ utility packages.
 - **Duplicated configuration.** The build is a `multi-package.yaml` plus 13
   `daml.yaml` files, each with its own copy of `sdk-version: 3.4.11`.
 
-## Extend dpm
+## A declarative manifest for dpm
 
 dpm (Moonsong Labs) adds a `dpm dario` command set to `dpm`. It reads a
 declarative manifest, `dpm.yaml`, resolves each dependency from where it
@@ -88,9 +88,9 @@ lives, generates the `daml.yaml` that `damlc` expects, and calls the standard
 | Workspace catalogs | Parsed and validated, not usable from packages |
 | Lockfile with artifact checksums | Not started |
 
-## Migrate DecMan to `dpm.yaml`
+## Three fixes in one migration
 
-### Replace vendored DARs with their sources
+### Dependencies declared by source, not copied in
 
 **Before.** Each package lists vendored DARs by path. This excerpt is from
 `governance-utility-onboarding/daml.yaml`:
@@ -125,7 +125,7 @@ OCI registry that we host. The registry allows anonymous reads.
 **Result:** the build reads no DARs from the repository, and every
 dependency's origin is in its manifest.
 
-### Reference sibling packages by name
+### Siblings referenced by name, not by versioned path
 
 **Before.** A package depends on its sibling's build output, with the
 sibling's version in the path:
@@ -152,9 +152,9 @@ edits in dependents.
 0.1.17 mismatch is not: it carried over unchanged, because each package still
 declares its own copy of each third-party dependency. Workspace catalogs fix
 this; see
-[Close the remaining gaps](#close-the-remaining-gaps).
+[What's still open](#whats-still-open).
 
-### Declare the workspace once
+### One workspace, one SDK version
 
 **Before.** `multi-package.yaml` lists the packages, and each of the 13
 `daml.yaml` files repeats the SDK version.
@@ -185,7 +185,7 @@ support.
 **Result:** one SDK declaration instead of 13, and one file that defines the
 workspace.
 
-## Restore byte-identical inputs
+## What committed DARs got right
 
 Committing DARs had one real benefit: every checkout built against the same
 bytes. Fetching from a registry gives that up. Git dependencies pin a commit,
@@ -198,7 +198,7 @@ A lockfile restores the guarantee. It records the checksum of every resolved
 artifact and fails the build when a fetched artifact doesn't match. dpm
 (Moonsong Labs) doesn't have one yet, and it's the next thing to build.
 
-## Measure the results
+## Fewer moving parts, longer manifests
 
 | Metric | Before (`daml.yaml`) | After (`dpm.yaml`) |
 |---|---|---|
@@ -212,9 +212,9 @@ artifact and fails the build when a fetched artifact doesn't match. dpm
 Line counts cover every `daml.yaml` plus `multi-package.yaml` before, and
 every `dpm.yaml` after.
 
-## Close the remaining gaps
+## What's still open
 
-### Shrink manifests with catalogs
+### Catalogs to shrink manifests and catch mismatches
 
 Manifests grew from 277 to 484 non-blank lines, because each package declares
 its Git and OCI dependencies in full. The same Splice commit appears 40 times.
@@ -234,7 +234,7 @@ workspace:
 dpm (Moonsong Labs) parses and validates `catalogs`, but packages can't
 reference them yet.
 
-### Account for the remaining DARs
+### DARs that stay, and why
 
 Two folders still hold DARs, and the build reads neither:
 
@@ -244,13 +244,13 @@ Two folders still hold DARs, and the build reads neither:
   at runtime. They're application assets, so this migration leaves them in
   place.
 
-### Answer open design questions
+### Questions for `dpm` maintainers
 
 - How should a package reference a catalog entry? One option is a `catalog:`
   key on the dependency that names the catalog.
 - What should the lockfile record, and where should it live in a workspace?
 
-### Plan the next phases
+### A three-phase plan
 
 Phase 1: migration
 
