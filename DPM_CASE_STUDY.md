@@ -94,36 +94,99 @@ source, the public Splice Git repository and the DA utility packages, which
 exercises both Git and OCI resolution. A migration that holds up here is
 stronger evidence than one on a sample project.
 
-## Proposal: a declarative manifest and package-management capabilities for `dpm`
+## What's new in dpm (Moonsong Labs)
 
-dpm (Moonsong Labs) adds a **`dpm dario` command set** to `dpm`. It:
+dpm (Moonsong Labs) adds a declarative manifest, `dpm.yaml`, and a
+**`dpm dario` command set** that builds from it. This section explains each
+new capability. The next section shows them applied to DecMan.
 
-1. Reads a declarative manifest, `dpm.yaml`.
-2. Resolves each dependency from where it lives.
-3. Generates the `daml.yaml` that `damlc` expects.
-4. Calls the standard `damlc`.
+### A declarative manifest: `dpm.yaml`
 
-The `dpm.yaml` schema is designed to:
+`dpm.yaml` describes a package: its name, version, SDK, build arguments, and
+dependencies. You declare each dependency by **what it is and where it comes
+from**, never by a file path. This package manifest from DecMan uses every
+dependency kind:
 
-- **Use one format for packages and workspaces.** A workspace manifest sets
-  shared values, such as the SDK version and registries, once for every
-  member package.
-- **Declare what a dependency is, not where its file sits.** Each dependency
-  names its source: an OCI registry with a semantic-versioning requirement, a
-  Git repository at a commit, branch, tag, or release, another package in the
-  workspace, or the SDK itself.
-- **Fail early.** `dpm` validates every manifest before it builds, so an
-  unknown registry or a misspelled sibling package fails with a clear error
-  instead of a missing file.
+```yaml
+schema: 1
 
-| Capability | Status in dpm (Moonsong Labs) |
+package:
+  name: governance-utility-onboarding-v1
+  version: 0.4.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-script: builtin              # supplied by the SDK
+
+  data-dependencies:
+    governance-action-v1: member      # another package in the workspace
+
+    splice-amulet:                    # a DAR in a Git repository
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-amulet-0.1.19.dar
+
+    utility-registry:                 # a package in an OCI registry
+      registry: main
+      version: 0.6.0
+```
+
+### Workspaces
+
+A **workspace manifest** at the root lists its member packages with paths or
+globs, such as `pkg/*`. It sets values that every member shares: the SDK
+version, which members inherit with `sdk: workspace`, and named registries for
+fetching and publishing. `dpm` discovers the workspace from any member
+directory.
+
+### Dependency resolution from the source
+
+`dpm` resolves each dependency kind differently:
+
+- **OCI.** `version` is a semantic-versioning requirement. `dpm` lists the
+  package's tags in the registry and picks the highest version that satisfies
+  it. An optional `digest` pins the exact artifact.
+- **Git.** `dpm` fetches a DAR from a repository at a commit, branch, or tag,
+  or from a GitHub release artifact.
+- **`member`.** `dpm` builds the sibling package first, and the dependent
+  compiles against its current sources.
+- **`builtin`.** The SDK supplies the package, as it does today.
+
+### A shared cache
+
+Fetched artifacts go into a **global cache** shared by every project on the
+machine, so `dpm` downloads each artifact once.
+
+### Compatibility with `damlc`
+
+`dpm` doesn't replace the compiler. It **generates the `daml.yaml` that
+`damlc` expects**, with every dependency resolved to a cached file, and then
+calls the standard `damlc`. Three commands cover the workflow:
+
+| Command | What it does |
 |---|---|
-| `dpm.yaml` manifests for packages and workspaces | ✅ Done |
-| Workspaces: member globs, shared SDK version, and registries | ✅ Done |
-| Dependencies from OCI registries, by semantic-versioning requirement | ✅ Done |
-| Dependencies from Git, by commit, branch, tag, or release artifact | ✅ Done |
-| Shared global cache for fetched artifacts | ✅ Done |
-| `member` dependencies between workspace packages | 🚧 Implemented, not merged yet |
+| `dpm dario build` | Resolves dependencies and builds the current package. With `--all`, builds every workspace member. |
+| `dpm dario generate` | Writes the equivalent `daml.yaml` without building. |
+| `dpm dario publish` | Builds the package and publishes it to an OCI registry. |
+
+### Validation before the build
+
+`dpm` validates every manifest before it builds. An unknown registry name, a
+`member` dependency that names no package in the workspace, or a malformed
+version requirement **fails with a clear error** instead of a missing file
+halfway through compilation.
+
+### Status
+
+| Capability | Status |
+|---|---|
+| `dpm.yaml` for packages and workspaces | ✅ Done |
+| OCI and Git dependencies | ✅ Done |
+| Global cache | ✅ Done |
+| `build`, `generate`, and `publish` commands | ✅ Done |
+| Validation before the build | ✅ Done |
+| `member` dependencies and `build --all` | 🚧 Implemented, not merged yet |
 | Workspace catalogs | 🚧 Parsed and validated, not usable from packages |
 | Lockfile with artifact checksums | ❌ Not started |
 
@@ -221,9 +284,8 @@ workspace:
       main: oci://zot.oceano.2networks.tech
 ```
 
-Each package sets `sdk: workspace`. To build everything, run `dpm dario build`
-from `daml/` with a build of dpm (Moonsong Labs) that includes `member`
-support.
+Each package sets `sdk: workspace`. To build everything, run
+`dpm dario build --all` from `daml/`.
 
 **Result:** **one SDK declaration instead of 13**, and one file that defines
 the workspace.
