@@ -58,6 +58,9 @@ flowchart LR
   before ~~~ after
 ```
 
+The improvements live in `dpm`; DecMan is where we apply them and measure the
+difference.
+
 ## The problem: a manual, file-based process
 
 The
