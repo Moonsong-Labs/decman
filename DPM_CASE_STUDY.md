@@ -1,26 +1,43 @@
-# Case study: building Decentralization Manager with `dpm.yaml`
+# PoC: building DecMan with advanced package-management capabilities in `dpm`
 
-We migrated the Daml build of
+This proof of concept shows what advanced package-management capabilities in
+`dpm` improve for a Canton app. We migrated the Daml build of
 [Decentralization Manager](https://github.com/DLC-link/decentralization-manager)
 (DecMan), a production Canton application with 13 packages, from `daml.yaml` to
-`dpm.yaml`, using **dpm (Moonsong Labs)**: our fork of `dpm` with advanced
-package-management capabilities. After the migration, the build reads none of
-the 17 third-party DARs that upstream commits, and it drops 24 versioned sibling
-paths and 12 duplicate SDK declarations. Version mismatches, longer manifests,
-and the loss of byte-identical inputs remain open until workspace catalogs and a
-lockfile land.
+`dpm.yaml`, a declarative manifest proposed by Moonsong Labs.
 
-## Two forks, one comparison
+The main results:
 
-This case study has two pieces, both built by Moonsong Labs:
+1. **Less manual work.** `dpm.yaml` changes the developer experience:
+   - Dependencies point directly at their OCI or Git source, instead of at DAR
+     files copied into the repository.
+   - Packages in the same workspace reference each other by name, so a
+     version bump no longer means editing every dependent.
+   - The workspace declares the SDK version once for all packages.
+2. **A cleaner repository.** The build reads no committed DAR files and no
+   hardcoded dependency paths.
+3. **No change to the toolchain.** `dpm` generates the `daml.yaml` that `damlc`
+   expects and calls the standard compiler. DecMan's application code is
+   unchanged.
+
+For DecMan, the build no longer reads any of the **17 third-party DARs** that
+upstream commits, and it drops **24 versioned sibling paths** and **12
+duplicate SDK declarations**.
+
+> **This demonstrates that a production Daml workspace can drop vendored DARs
+> and hardcoded paths by moving to a declarative manifest, without changing its
+> compiler or its application code.**
+
+## Improvements in `dpm`, applied to DecMan
+
+This case study has two components:
 
 - **dpm (Moonsong Labs)**, a fork of `dpm` with advanced package-management
   capabilities. It reads `dpm.yaml`, fetches dependencies from their sources,
-  and calls `damlc`. Its source is the private repository
-  `Moonsong-Labs/dpm-priv`.
+  and calls `damlc`.
 - **This repository**, a fork of DecMan whose Daml packages build with dpm
-  (Moonsong Labs). Only the Daml build setup changed; the application code is
-  the same as upstream DecMan, which serves as the baseline.
+  (Moonsong Labs). **Only the Daml build setup changed**; the application
+  code is the same as upstream DecMan, which serves as the baseline.
 
 ```mermaid
 flowchart LR
@@ -40,57 +57,79 @@ flowchart LR
   before ~~~ after
 ```
 
-## A manual, file-based process
+## The problem: a manual, file-based process
 
 The
 [Canton Network Developer Experience and Tooling Survey (2026)](https://forum.canton.network/t/canton-network-developer-experience-and-tooling-survey-analysis-2026/8412)
-describes Daml dependency management as "a manual, file-based process."
-Developers download DAR files by hand, move them between folders, and
-struggle to resolve version mismatches.
+describes Daml dependency management this way:
 
-DecMan shows these symptoms, plus one the survey doesn't name: configuration
-duplicated across packages.
+> "a manual, file-based process."
 
-## The same symptoms in a production app
+Developers **download DAR files by hand**, **move them between folders**, and
+**struggle to resolve version mismatches**.
 
-The baseline is upstream `main` at commit
+## Context: symptoms in a production app
+
+DecMan shows these symptoms, plus one the survey doesn't name: **configuration
+duplicated across packages**. The baseline is upstream `main` at commit
 [`b507e55`](https://github.com/DLC-link/decentralization-manager/commit/b507e5519c5d4bd8b8f5d0c6fe7c6548814fbf9f)
-(DecMan v1.9.0). DecMan has 13 Daml packages that depend on each other and on
-17 third-party DARs, most of them from Splice and the Digital Asset (DA)
+(DecMan v1.9.0). DecMan has **13 Daml packages** that depend on each other and
+on **17 third-party DARs**, most of them from Splice and the Digital Asset (DA)
 utility packages.
 
 - **DARs downloaded and moved by hand.** All 17 third-party DARs are
-  committed under `daml/dars/`, and the manifests reference them 68 times by
-  relative path. A DAR's origin and version exist only in its filename.
-- **Version mismatches.** 24 references to sibling packages hardcode a build
+  committed under `daml/dars/`, and the manifests reference them **68 times**
+  by relative path. A DAR's origin and version exist only in its filename.
+- **Version mismatches.** **24 references** to sibling packages hardcode a build
   path that includes the sibling's version, so a version bump means editing
   every dependent. Nothing checks consistency: `governance-token-custody-test`
-  uses `splice-amulet` 0.1.17, and every other package uses 0.1.19.
-- **Duplicated configuration.** The build is a `multi-package.yaml` plus 13
-  `daml.yaml` files, each with its own copy of `sdk-version: 3.4.11`.
+  uses `splice-amulet` **0.1.17**, and every other package uses **0.1.19**.
+- **Duplicated configuration.** The build is a `multi-package.yaml` plus **13
+  `daml.yaml` files**, each with its own copy of `sdk-version: 3.4.11`.
 
-## A declarative manifest for dpm
+We chose DecMan because it shows every symptom in one real codebase. It's a
+production application, so the migration has to keep a real build working. Its 13 packages depend on each other, which exercises workspace
+handling and sibling references. Its third-party DARs come from two kinds of
+source, the public Splice Git repository and the DA utility packages, which
+exercises both Git and OCI resolution. A migration that holds up here is
+stronger evidence than one on a sample project.
 
-dpm (Moonsong Labs) adds a `dpm dario` command set to `dpm`. It reads a
-declarative manifest, `dpm.yaml`, resolves each dependency from where it
-lives, generates the `daml.yaml` that `damlc` expects, and calls the standard
-`damlc`. The schema is specified in
-`pkg/dario/dpm-yaml-schema.md` in `Moonsong-Labs/dpm-priv`.
+## Proposal: a declarative manifest and package-management capabilities for `dpm`
+
+dpm (Moonsong Labs) adds a **`dpm dario` command set** to `dpm`. It:
+
+1. Reads a declarative manifest, `dpm.yaml`.
+2. Resolves each dependency from where it lives.
+3. Generates the `daml.yaml` that `damlc` expects.
+4. Calls the standard `damlc`.
+
+The `dpm.yaml` schema is designed to:
+
+- **Use one format for packages and workspaces.** A workspace manifest sets
+  shared values, such as the SDK version and registries, once for every
+  member package.
+- **Declare what a dependency is, not where its file sits.** Each dependency
+  names its source: an OCI registry with a semantic-versioning requirement, a
+  Git repository at a commit, branch, tag, or release, another package in the
+  workspace, or the SDK itself.
+- **Fail early.** `dpm` validates every manifest before it builds, so an
+  unknown registry or a misspelled sibling package fails with a clear error
+  instead of a missing file.
 
 | Capability | Status in dpm (Moonsong Labs) |
 |---|---|
-| `dpm.yaml` manifests for packages and workspaces | Done |
-| Workspaces: member globs, shared SDK version, and registries | Done |
-| Dependencies from OCI registries, by semantic-versioning requirement | Done |
-| Dependencies from Git, by commit, branch, tag, or release artifact | Done |
-| Shared global cache for fetched artifacts | Done |
-| `member` dependencies between workspace packages | On branch `feat/member-dep-support`, not merged |
-| Workspace catalogs | Parsed and validated, not usable from packages |
-| Lockfile with artifact checksums | Not started |
+| `dpm.yaml` manifests for packages and workspaces | ✅ Done |
+| Workspaces: member globs, shared SDK version, and registries | ✅ Done |
+| Dependencies from OCI registries, by semantic-versioning requirement | ✅ Done |
+| Dependencies from Git, by commit, branch, tag, or release artifact | ✅ Done |
+| Shared global cache for fetched artifacts | ✅ Done |
+| `member` dependencies between workspace packages | 🚧 Implemented, not merged yet |
+| Workspace catalogs | 🚧 Parsed and validated, not usable from packages |
+| Lockfile with artifact checksums | ❌ Not started |
 
-## Three fixes in one migration
+## Three improvements, before and after
 
-### Dependencies declared by source, not copied in
+### 1. Dependencies declared by source, not copied in
 
 **Before.** Each package lists vendored DARs by path. This excerpt is from
 `governance-utility-onboarding/daml.yaml`:
@@ -119,13 +158,14 @@ data-dependencies:
     version: 0.6.0
 ```
 
-For this case study, we republished the DA utility DARs and `testlib` to an
-OCI registry that we host. The registry allows anonymous reads.
+> [!NOTE]
+> For this case study, we republished the DA utility DARs and `testlib` to an
+> OCI registry that we host. The registry allows anonymous reads.
 
-**Result:** the build reads no DARs from the repository, and every
+**Result:** the build reads **no DARs from the repository**, and every
 dependency's origin is in its manifest.
 
-### Siblings referenced by name, not by versioned path
+### 2. Siblings referenced by name, not by versioned path
 
 **Before.** A package depends on its sibling's build output, with the
 sibling's version in the path:
@@ -142,19 +182,22 @@ data-dependencies:
   governance-action-v1: member
 ```
 
-`dpm` builds the sibling first (on the `feat/member-dep-support` branch), and
-the dependent compiles against the
+`dpm` builds the sibling first, and the dependent compiles against the
 sibling's current sources. Packages keep independent versions, because Daml
-upgrade compatibility is per package, but a version bump no longer requires
-edits in dependents.
+upgrade compatibility is per package, but **a version bump no longer requires
+edits in dependents**.
 
-**Result:** the 24 versioned sibling paths are gone. The `splice-amulet`
+> [!NOTE]
+> `member` resolution is implemented in dpm (Moonsong Labs) but isn't merged
+> yet.
+
+**Result:** the **24 versioned sibling paths are gone**. The `splice-amulet`
 0.1.17 mismatch is not: it carried over unchanged, because each package still
 declares its own copy of each third-party dependency. Workspace catalogs fix
 this; see
-[What's still open](#whats-still-open).
+[Catalogs to shrink manifests and catch mismatches](#2-catalogs-to-shrink-manifests-and-catch-mismatches).
 
-### One workspace, one SDK version
+### 3. One workspace, one SDK version
 
 **Before.** `multi-package.yaml` lists the packages, and each of the 13
 `daml.yaml` files repeats the SDK version.
@@ -182,43 +225,44 @@ Each package sets `sdk: workspace`. To build everything, run `dpm dario build`
 from `daml/` with a build of dpm (Moonsong Labs) that includes `member`
 support.
 
-**Result:** one SDK declaration instead of 13, and one file that defines the
-workspace.
-
-## What committed DARs got right
-
-Committing DARs had one real benefit: every checkout built against the same
-bytes. Fetching from a registry gives that up. Git dependencies pin a commit,
-but OCI dependencies resolve to a tag, and a registry can move a tag to
-different content. The schema lets you pin an OCI DAR with `digest`, but this
-repository doesn't, because maintaining digests by hand across 13 packages is
-error-prone.
-
-A lockfile restores the guarantee. It records the checksum of every resolved
-artifact and fails the build when a fetched artifact doesn't match. dpm
-(Moonsong Labs) doesn't have one yet, and it's the next thing to build.
+**Result:** **one SDK declaration instead of 13**, and one file that defines
+the workspace.
 
 ## Fewer moving parts, longer manifests
 
 | Metric | Before (`daml.yaml`) | After (`dpm.yaml`) |
 |---|---|---|
-| Third-party DARs the build reads from the repository | 17 | 0 |
-| Relative-path references to those DARs | 68 | 0 |
-| Sibling references that hardcode a build path and version | 24 | 0 |
-| Copies of the SDK version | 13 | 1 |
+| Third-party DARs the build reads from the repository | 17 | **0** |
+| Relative-path references to those DARs | 68 | **0** |
+| Sibling references that hardcode a build path and version | 24 | **0** |
+| Copies of the SDK version | 13 | **1** |
 | Known version mismatches | 1 | 1 |
-| Non-blank manifest lines | 277 | 484 |
+| Non-blank manifest lines | 277 | 484 ⚠️ |
 
 Line counts cover every `daml.yaml` plus `multi-package.yaml` before, and
 every `dpm.yaml` after.
 
-## What's still open
+## The future: further improvements to the developer experience
 
-### Catalogs to shrink manifests and catch mismatches
+### 1. Lockfile
 
-Manifests grew from 277 to 484 non-blank lines, because each package declares
-its Git and OCI dependencies in full. The same Splice commit appears 40 times.
-Workspace catalogs let a workspace declare each third-party dependency once,
+Committing DARs had one real benefit: **every checkout built against the same
+bytes**. Fetching from a registry gives that up. Git dependencies pin a commit,
+but OCI dependencies resolve to a tag, and a registry can move a tag to
+different content. The schema lets you pin an OCI DAR with `digest`, but this
+repository doesn't, because maintaining digests by hand across 13 packages is
+error-prone.
+
+> [!IMPORTANT]
+> **A lockfile restores the guarantee.** It records the checksum of every
+> resolved artifact and fails the build when a fetched artifact doesn't match.
+> dpm (Moonsong Labs) doesn't have one yet, and it's the next thing to build.
+
+### 2. Catalogs to shrink manifests and catch mismatches
+
+Manifests grew from **277 to 484** non-blank lines, because each package
+declares its Git and OCI dependencies in full. The same Splice commit appears
+**40 times**. Workspace catalogs let a workspace declare each third-party dependency once,
 which also removes the place where mismatches hide:
 
 ```yaml
@@ -233,47 +277,3 @@ workspace:
 
 dpm (Moonsong Labs) parses and validates `catalogs`, but packages can't
 reference them yet.
-
-### DARs that stay, and why
-
-Two folders still hold DARs, and the build reads neither:
-
-- `daml/dars-to-publish/` holds 7 third-party DARs, the copies used to seed
-  the OCI registry. Phase 1 removes them.
-- `releases/` holds first-party DARs that the DecMan server uploads to Canton
-  at runtime. They're application assets, so this migration leaves them in
-  place.
-
-### Questions for `dpm` maintainers
-
-- How should a package reference a catalog entry? One option is a `catalog:`
-  key on the dependency that names the catalog.
-- What should the lockfile record, and where should it live in a workspace?
-
-### A three-phase plan
-
-Phase 1: migration
-
-- [x] Migrate all 13 packages to `dpm.yaml` with a workspace manifest.
-- [x] Replace sibling paths with `member` dependencies.
-- [x] Replace committed third-party DARs with OCI and Git dependencies.
-- [ ] Merge `member` resolution into the `dario` branch of dpm (Moonsong Labs).
-- [ ] Rename the workspace from `token-trading`, a leftover from an example.
-- [ ] Remove `daml/dars-to-publish/` and document how the registry was seeded.
-- [ ] Record a clean build from a fresh clone with an empty cache.
-
-Phase 2: workspace catalogs
-
-- [ ] Implement package-side catalog references in dpm (Moonsong Labs).
-- [ ] Move Splice and DA utility declarations into `workspace.catalogs`.
-- [ ] Resolve the `splice-amulet` 0.1.17 and 0.1.19 mismatch.
-- [ ] Remeasure manifest size.
-
-Phase 3: lockfile
-
-- [ ] Implement a lockfile in dpm (Moonsong Labs) that records artifact
-      checksums.
-- [ ] Commit the lockfile and show that a changed artifact fails the build.
-
-Out of scope: moving `releases/` to OCI, which requires DecMan runtime
-changes, and re-enabling CI on this fork.
