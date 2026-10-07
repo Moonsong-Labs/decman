@@ -44,16 +44,16 @@ This case study has two components:
 flowchart LR
   subgraph before["Before: upstream DecMan"]
     direction TB
-    m1["multi-package.yaml<br/>+ 13 daml.yaml"] -->|relative paths| v["17 DARs committed<br/>in daml/dars/"]
-    m1 --> c1["damlc"]
-    v --> c1
+    m1["multi-package.yaml<br/>+ 13 daml.yaml"] --> d1["dpm<br/>build --all"]
+    v["17 DARs committed<br/>in daml/dars/"] -->|read by path| d1
+    d1 -->|daml.yaml| c1["damlc"]
   end
   subgraph after["After: this repository"]
     direction TB
-    m2["workspace dpm.yaml<br/>+ 13 package dpm.yaml"] --> d["dpm-msl"]
-    g["Splice Git repository"] -->|fetch| d
-    o["OCI registry"] -->|fetch| d
-    d -->|generated daml.yaml| c2["damlc"]
+    m2["workspace dpm.yaml<br/>+ 13 package dpm.yaml"] --> d2["dpm-msl<br/>dario build --all"]
+    g["Splice Git repository"] -->|fetch| d2
+    o["OCI registry"] -->|fetch| d2
+    d2 -->|generated daml.yaml| c2["damlc"]
   end
   before ~~~ after
 ```
