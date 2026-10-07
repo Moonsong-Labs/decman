@@ -1,0 +1,37 @@
+schema: 1
+
+package:
+  name: governance-utility-credential-v1
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-script: builtin
+    daml-stdlib: builtin
+
+  data-dependencies:
+    governance-action-v1: member
+
+    splice-util:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-util-0.1.4.dar
+
+
+    utility-credential-app:
+      registry: main
+      version: 0.4.1
+
+    utility-credential:
+      registry: main
+      version: 0.1.0
+
+    utility-commercials:
+      registry: main
+      version: 0.4.1
+
+  build-arguments:
+  - --target=2.2
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches

@@ -1,2 +1,3 @@
-.daml
+.daml/
 log/
+daml.yaml

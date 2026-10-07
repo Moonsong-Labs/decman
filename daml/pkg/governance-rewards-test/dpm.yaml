@@ -1,0 +1,41 @@
+schema: 1
+
+package:
+  name: governance-rewards-test
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-prim: builtin
+    daml-stdlib: builtin
+    daml-script: builtin
+
+  data-dependencies:
+    governance-action-v1: member
+    governance-core-v1: member
+    governance-core-test: member
+    governance-rewards-automation-v1: member
+
+    splice-wallet:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-wallet-0.1.18.dar
+
+
+    splice-amulet:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-amulet-0.1.19.dar
+
+
+    testlib:
+      version: "0.1.0"
+      registry: main
+
+  build-arguments:
+  - --target=2.2
+  - -Wno-upgrade-interfaces
+  - -Wno-template-interface-depends-on-daml-script
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches

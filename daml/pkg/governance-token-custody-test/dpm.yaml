@@ -1,0 +1,96 @@
+schema: 1
+
+package:
+  name: governance-token-custody-test
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-prim: builtin
+    daml-stdlib: builtin
+    daml-script: builtin
+
+  data-dependencies:
+    governance-action-v1: member
+    governance-core-v1: member
+    governance-token-custody-v1: member
+
+    testlib:
+      version: "0.1.0"
+      registry: main
+
+    splice-amulet:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-amulet-0.1.17.dar
+
+
+    splice-api-featured-app-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-featured-app-v1-1.0.0.dar
+
+
+    splice-api-token-burn-mint-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-burn-mint-v1-1.0.0.dar
+
+
+    splice-api-token-holding-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-holding-v1-1.0.0.dar
+
+
+    splice-api-token-metadata-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
+
+
+    splice-api-token-transfer-instruction-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-transfer-instruction-v1-1.0.0.dar
+
+
+    splice-util:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-util-0.1.4.dar
+
+
+    splice-wallet:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-wallet-0.1.18.dar
+
+
+    utility-commercials:
+      registry: main
+      version: 0.4.1
+
+    utility-credential-app:
+      registry: main
+      version: 0.4.1
+
+    utility-registry-app:
+      registry: main
+      version: 0.7.0
+
+    utility-registry-holding:
+      registry: main
+      version: 0.2.1
+
+    utility-registry:
+      registry: main
+      version: 0.6.0
+
+  build-arguments:
+  - --target=2.2
+  - -Wno-upgrade-interfaces
+  - -Wno-template-interface-depends-on-daml-script
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches

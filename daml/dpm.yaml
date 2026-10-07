@@ -1,0 +1,13 @@
+schema: 1
+
+workspace:
+  name: token-trading
+  sdk: 3.4.11
+  members:
+    - pkg/*
+
+  registries:
+    query:
+      main: oci://zot.oceano.2networks.tech
+    publish:
+      main: oci://zot.oceano.2networks.tech

@@ -1,0 +1,57 @@
+schema: 1
+
+package:
+  name: governance-token-custody-v1
+  version: 0.1.0
+  source: daml
+  sdk: workspace
+
+  dependencies:
+    daml-script: builtin
+    daml-stdlib: builtin
+
+  data-dependencies:
+    governance-action-v1: member
+
+    splice-api-token-holding-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-holding-v1-1.0.0.dar
+
+
+    splice-api-token-metadata-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-metadata-v1-1.0.0.dar
+
+
+    splice-api-token-transfer-instruction-v1:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-api-token-transfer-instruction-v1-1.0.0.dar
+
+
+    splice-util:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-util-0.1.4.dar
+
+
+    splice-wallet:
+      git: https://github.com/canton-network/splice
+      commit: d5b780b5b636fe46f6f77e87c7655ddaf53c50fc
+      path: daml/dars/splice-wallet-0.1.18.dar
+
+
+    utility-registry-app:
+      registry: main
+      version: 0.7.0
+
+    utility-registry:
+      registry: main
+      version: 0.6.0
+
+  build-arguments:
+  - --target=2.2
+  - --ghc-option=-Wunused-binds
+  - --ghc-option=-Wunused-matches
