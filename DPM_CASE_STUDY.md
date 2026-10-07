@@ -72,32 +72,25 @@ describes Daml dependency management this way:
 Developers **download DAR files by hand**, **move them between folders**, and
 **struggle to resolve version mismatches**.
 
-## Context: symptoms in a production app
+## DecMan: symptoms in a production app
 
 DecMan shows these symptoms, plus one the survey doesn't name: **configuration
-duplicated across packages**. The baseline is upstream `main` at commit
-[`b507e55`](https://github.com/DLC-link/decentralization-manager/commit/b507e5519c5d4bd8b8f5d0c6fe7c6548814fbf9f)
-(DecMan v1.9.0). DecMan has **13 Daml packages** that depend on each other and
-on **17 third-party DARs**, most of them from Splice and the Digital Asset (DA)
-utility packages.
+duplicated across packages**:
 
 - **DARs downloaded and moved by hand.** All 17 third-party DARs are
   committed under `daml/dars/`, and the manifests reference them **68 times**
   by relative path. A DAR's origin and version exist only in its filename.
 - **Version mismatches.** **24 references** to sibling packages hardcode a build
-  path that includes the sibling's version, so a version bump means editing
-  every dependent. Nothing checks consistency: `governance-token-custody-test`
+  path that includes the sibling's version. A version bump means editing
+  every dependent. Nothing checks consistency: for example, `governance-token-custody-test`
   uses `splice-amulet` **0.1.17**, and every other package uses **0.1.19**.
 - **Duplicated configuration.** The build is a `multi-package.yaml` plus **13
   `daml.yaml` files**, each with its own copy of `sdk-version: 3.4.11`.
 
-We chose DecMan because it shows every symptom in one real codebase. It's a
-production application, so the migration has to keep a real build working. Its
-13 packages depend on each other, which exercises workspace handling and
-sibling references. Its third-party DARs come from two kinds of
-source, the public Splice Git repository and the DA utility packages, which
-exercises both Git and OCI resolution. A migration that holds up here is
-stronger evidence than one on a sample project.
+A migration that holds up here is
+stronger evidence than one on a sample project. The baseline is upstream `main` at commit
+[`b507e55`](https://github.com/DLC-link/decentralization-manager/commit/b507e5519c5d4bd8b8f5d0c6fe7c6548814fbf9f)
+(DecMan v1.9.0).
 
 ## Three improvements, before and after
 
@@ -326,12 +319,36 @@ reference them yet.
 
 ### 3. Smart, deep conflict resolution
 
-Resolve conflicting version requirements across the whole dependency tree.
+Today `dpm-msl` resolves each declared dependency on its own: an OCI
+requirement resolves to the highest published version that satisfies it, and
+nothing looks further down the tree. When two dependencies need different
+versions of the same package, the conflict surfaces in `damlc`, and the
+developer has to untangle it by hand.
+
+Deep conflict resolution builds the full tree of dependencies and
+sub-dependencies with their version requirements. Where one version satisfies
+every requirement, `dpm` uses it. Where versions genuinely conflict, `dpm`
+builds from the leaves up to the root and passes the conflicting packages as
+`data-dependencies`, which `damlc` can load side by side.
 
 ### 4. Source code dependencies
 
-Depend on a package's source code, not only on its compiled DAR.
+Every third-party dependency in DecMan is a compiled DAR. A DAR is built with
+one SDK version, so it can only enter a build as a `data-dependency`, where
+`damlc` reconstructs its interfaces and skips SDK checks.
+
+The schema already reserves the alternative: OCI dependencies carry source code
+by default, and `dar: true` selects the compiled DAR. With source code
+dependencies, `dpm` fetches a library's sources and compiles them with the
+consumer's SDK, so libraries no longer need a DAR per SDK version. `dpm-msl`
+parses these declarations but doesn't resolve them yet.
 
 ### 5. Local cache for partial builds
 
-Cache intermediate builds, so `dpm` rebuilds only the packages that changed.
+The global cache stores what `dpm` fetches. A local cache stores what it
+builds: the intermediate DARs of members and dependencies, kept in each
+project. Most changes touch the top of the tree, so `dpm` rebuilds only the
+packages whose inputs changed instead of the whole workspace.
+
+`dpm-msl` already skips rebuilding a `member` whose DAR is up to date. This
+isn't merged yet, and it doesn't extend to fetched dependencies.
