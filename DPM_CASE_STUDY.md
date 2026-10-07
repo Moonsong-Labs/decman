@@ -185,7 +185,7 @@ halfway through compilation.
 
 ### 1. Dependencies declared by source, not copied in
 
-❌ **Before.** Each package lists vendored DARs by path. This excerpt is from
+⏪ **Before.** Each package lists vendored DARs by path. This excerpt is from
 `governance-utility-onboarding/daml.yaml`:
 
 ```yaml
@@ -196,7 +196,7 @@ data-dependencies:
   # ... 10 more
 ```
 
-✅ **After.** Each dependency names its source. Splice DARs come from the Splice
+⏩ **After.** Each dependency names its source. Splice DARs come from the Splice
 Git repository at a pinned commit, and DA utility DARs come from an OCI
 registry. `dpm` fetches them into its cache:
 
@@ -216,12 +216,12 @@ data-dependencies:
 > For this case study, we republished the DA utility DARs and `testlib` to an
 > OCI registry that we host. The registry allows anonymous reads.
 
-📈 **Result:** the build reads **no DARs from the repository**, and every
+✅ **Result:** the build reads **no DARs from the repository**, and every
 dependency's origin is in its manifest.
 
 ### 2. Siblings referenced by name, not by versioned path
 
-❌ **Before.** A package depends on its sibling's build output, with the
+⏪ **Before.** A package depends on its sibling's build output, with the
 sibling's version in the path:
 
 ```yaml
@@ -229,7 +229,7 @@ data-dependencies:
   - ../governance-action-v1/.daml/dist/governance-action-v1-0.1.0.dar
 ```
 
-✅ **After.** A package names its sibling:
+⏩ **After.** A package names its sibling:
 
 ```yaml
 data-dependencies:
@@ -245,7 +245,7 @@ edits in dependents**.
 > `member` resolution is implemented in dpm (Moonsong Labs) but isn't merged
 > yet.
 
-📈 **Result:** the **24 versioned sibling paths are gone**. The `splice-amulet`
+✅ **Result:** the **24 versioned sibling paths are gone**. The `splice-amulet`
 0.1.17 mismatch is not: it carried over unchanged, because each package still
 declares its own copy of each third-party dependency. Workspace catalogs fix
 this; see
@@ -253,10 +253,10 @@ this; see
 
 ### 3. One workspace, one SDK version
 
-❌ **Before.** `multi-package.yaml` lists the packages, and each of the 13
+⏪ **Before.** `multi-package.yaml` lists the packages, and each of the 13
 `daml.yaml` files repeats the SDK version.
 
-✅ **After.** One workspace manifest, [`daml/dpm.yaml`](daml/dpm.yaml), declares
+⏩ **After.** One workspace manifest, [`daml/dpm.yaml`](daml/dpm.yaml), declares
 the members, the SDK version, and the registries:
 
 ```yaml
@@ -278,7 +278,7 @@ workspace:
 Each package sets `sdk: workspace`. To build everything, run
 `dpm dario build --all` from `daml/`.
 
-📈 **Result:** **one SDK declaration instead of 13**, and one file that defines
+✅ **Result:** **one SDK declaration instead of 13**, and one file that defines
 the workspace.
 
 ## Fewer moving parts, longer manifests
