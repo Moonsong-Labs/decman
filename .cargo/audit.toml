@@ -11,10 +11,6 @@ ignore = [
   # "sqlite" backend is on). Marvin requires an attacker to observe RSA
   # decryption timing over the network; we do not decrypt RSA anywhere.
   "RUSTSEC-2023-0071",
-  # paste is unmaintained (not a vulnerability), pulled in transitively only
-  # by ratatui (the decman-cli TUI). Trivial compile-time proc-macro, no
-  # runtime/security surface. Mirrors the ignore in deny.toml.
-  "RUSTSEC-2024-0436",
   # rkyv 0.7 is an *optional* dependency of rust_decimal (behind its `rkyv`
   # feature, which nothing here enables), so it is recorded in Cargo.lock but
   # never compiled: `cargo tree -e normal -i rkyv --target all --all-features`
