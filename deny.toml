@@ -6,12 +6,6 @@
 
 [advisories]
 ignore = [
-  # `paste` is unmaintained (RUSTSEC-2024-0436). It is a trivial compile-time
-  # token-pasting proc-macro with no runtime or security surface, pulled in
-  # transitively only by `ratatui` (the `decman-cli` TUI). There is no
-  # maintained drop-in until ratatui moves off it, so ignore the advisory
-  # rather than block CI.
-  "RUSTSEC-2024-0436",
   # h2 0.3 accepts and queues empty DATA frames without limit (RUSTSEC-2026-0258,
   # low severity: unbounded memory, or a panic if the length overflows).
   #
